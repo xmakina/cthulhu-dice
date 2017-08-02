@@ -1,0 +1,21 @@
+give all players 3 sanity
+set middle sanity to 0
+set active player to 1
+
+gameloop:
+highlight current player box
+choose target
+    - click player box - highlight
+active player rolls
+    goto diceroll
+target player rolls
+    goto diceroll
+advance active player
+
+diceroll
+    5 ??? - target loses sanity to middle
+    4 tentacle - attacker takes from defender
+    1 eye - choose any
+        - show menu option
+    1 star - gain sanity from middle
+    1 cthulu - everyone lose one
