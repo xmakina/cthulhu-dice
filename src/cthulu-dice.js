@@ -21,12 +21,14 @@
   module.exports = CthuluDice
 
   const STATES = {
-    CHOOSE_TARGET: 'CHOOSE_TARGET'
+    CHOOSE_TARGET: 'Choosing target',
+    EYE_CHOICE: 'Choosing Eye option'
   }
 
   const FACES = {
     YELLOW_SIGN: 'Yellow Sign',
-    TENTACLE: 'Tentacle'
+    TENTACLE: 'Tentacle',
+    EYE: 'Eye'
   }
 
   CthuluDice.STATES = STATES
@@ -70,13 +72,14 @@
     }
 
     if (gameState.currentAction === STATES.CHOOSE_TARGET) {
-      let targetIndex = findTarget(gameState.players, content)
+      const targetIndex = findTarget(gameState.players, content)
+      const victimName = gameState.players[targetIndex].name
 
       let dice = roll(this.math.random())
       switch (dice) {
         case FACES.YELLOW_SIGN:
           gameState.players[targetIndex].sanity--
-          message = `${playerId} rolled a yellow sign! ${gameState.players[targetIndex].name} loses 1 sanity to Cthulu.\n`
+          message = `${playerId} rolled a yellow sign! ${victimName} loses 1 sanity to Cthulu.\n`
           gameState.cthulu = gameState.cthulu + 1 || 1
           break
       }
@@ -85,13 +88,18 @@
       switch (dice) {
         case FACES.YELLOW_SIGN:
           gameState.players[gameState.currentPlayer].sanity--
-          message += `${gameState.players[targetIndex].name} responded with a yellow sign! ${playerId} loses 1 sanity to Cthulu.`
+          message += `${victimName} responded with a yellow sign! ${playerId} loses 1 sanity to Cthulu.`
           gameState.cthulu = gameState.cthulu + 1 || 1
           break
         case FACES.TENTACLE:
           gameState.players[targetIndex].sanity--
           gameState.players[gameState.currentPlayer].sanity++
-          message += `${gameState.players[targetIndex].name} responded with a tentacle! ${gameState.players[targetIndex].name} loses 1 sanity to ${playerId}.`
+          message += `${victimName} responded with a tentacle! ${victimName} loses 1 sanity to ${playerId}.`
+          break
+        case FACES.EYE:
+          gameState.currentAction = STATES.EYE_CHOICE
+          gameState.eyeChoicePlayer = victimName
+          message += `${victimName} responded with opening the eye! What do you want to do, ${victimName}?`
           break
       }
     }
@@ -128,8 +136,13 @@
     if (score <= 5) {
       return FACES.YELLOW_SIGN
     }
+
     if (score > 5 && score <= 9) {
       return FACES.TENTACLE
+    }
+
+    if (score === 10) {
+      return FACES.EYE
     }
 
     throw new Error('Not yet implemented')

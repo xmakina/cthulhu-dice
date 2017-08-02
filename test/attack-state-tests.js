@@ -7,7 +7,8 @@
   describe('when attacking', () => {
     let response = null
     let players = []
-    let currentPlayerIndex = 0
+    let currentPlayerIndex = null
+    let targetPlayerIndex = null
     let gameState = {}
     let random = new Random()
     let subject = new CthuluDice(random)
@@ -18,6 +19,7 @@
 
       players = [ '<@201981727873171456>', '<@196004823802445824>', '<@135478939966504970>' ]
       currentPlayerIndex = 0
+      targetPlayerIndex = 1
       gameState = {
         players: [{
           name: players[0],
@@ -36,11 +38,11 @@
 
     describe('a valid target', () => {
       let currentPlayer = players[currentPlayerIndex]
-      let content = players[currentPlayerIndex + 1]
+      let content = players[targetPlayerIndex]
 
       beforeEach(() => {
         currentPlayer = players[currentPlayerIndex]
-        content = players[currentPlayerIndex + 1]
+        content = players[targetPlayerIndex]
       })
 
       describe('and a yellow sign is rolled', () => {
@@ -55,7 +57,7 @@
           })
 
           it('should lower the target by one sanity', () => {
-            assert.equal(response.gameState.players[currentPlayerIndex + 1].sanity, 2)
+            assert.equal(response.gameState.players[targetPlayerIndex].sanity, 2)
           })
 
           it('should report a yellow sign was rolled', () => {
@@ -73,6 +75,10 @@
           it('should add one sanity to cthulu', () => {
             assert.equal(response.gameState.cthulu, 2)
           })
+
+          it('should move to the next player', () => {
+            assert.equal(response.gameState.currentPlayer, targetPlayerIndex)
+          })
         })
 
         describe('and a tentacle is rolled in response', () => {
@@ -82,7 +88,7 @@
           })
 
           it('should lower the target by two sanity', () => {
-            assert.equal(response.gameState.players[currentPlayerIndex + 1].sanity, 1)
+            assert.equal(response.gameState.players[targetPlayerIndex].sanity, 1)
           })
 
           it('should report a yellow sign was rolled', () => {
@@ -100,22 +106,47 @@
           it('should add one sanity to cthulu', () => {
             assert.equal(response.gameState.cthulu, 1)
           })
+
+          it('should move to the next player', () => {
+            assert.equal(response.gameState.currentPlayer, targetPlayerIndex)
+          })
+        })
+
+        describe('and an eye is rolled in response', () => {
+          beforeEach(() => {
+            random.setRandom(0.8)
+            response = subject.run(currentPlayer, content, gameState)
+          })
+
+          it('should lower the target by one', () => {
+            assert.equal(response.gameState.players[targetPlayerIndex].sanity, 2)
+          })
+
+          it('should report a yellow sign was rolled', () => {
+            assert.equal(response.message.indexOf('<@201981727873171456> rolled a yellow sign! <@196004823802445824> loses 1 sanity to Cthulu.'), 0)
+          })
+
+          it('should leave the attacker at three sanity', () => {
+            assert.equal(response.gameState.players[currentPlayerIndex].sanity, 3)
+          })
+
+          it('should report an eye was rolled in response', () => {
+            assert.equal(response.message.indexOf('<@196004823802445824> responded with opening the eye! What do you want to do, <@196004823802445824>?'), 92)
+          })
+
+          it('should add one sanity to cthulu', () => {
+            assert.equal(response.gameState.cthulu, 1)
+          })
+
+          it('should set the game state to be awaiting eye choice', () => {
+            assert.equal(response.gameState.currentAction, CthuluDice.STATES.EYE_CHOICE)
+          })
+
+          it('should know who should respond', () => {
+            assert.equal(response.gameState.eyeChoicePlayer, players[targetPlayerIndex])
+          })
         })
       })
-
-      // describe('and a tentacle is rolled', () => {
-      //   beforeEach(() => {
-      //     random.setRandom(0.1)
-      //   })
-
-      //   it('should steal one sanity from the target', () => {
-      //     assert.equal(response.gameState.players[currentPlayerIndex + 1].sanity, 2)
-      //   })
-
-      //   it('should steal add one sanity to the current player', () => {
-      //     assert.equal(response.gameState.players[currentPlayerIndex].sanity, 4)
-      //   })
-      // })
     })
   })
 })()
