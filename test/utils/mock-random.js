@@ -1,5 +1,8 @@
 (function () {
   class MockRandom {
+    constructor () {
+      nextRandom = []
+    }
   }
 
   let nextRandom = []

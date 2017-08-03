@@ -54,7 +54,6 @@
         describe('and a yellow sign is rolled in response', () => {
           beforeEach(() => {
             random.setRandom(0.2)
-            console.log('gameState', gameState)
             response = subject.run(currentPlayer, content, gameState)
           })
 
