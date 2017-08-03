@@ -28,7 +28,9 @@
   const FACES = {
     YELLOW_SIGN: 'Yellow Sign',
     TENTACLE: 'Tentacle',
-    EYE: 'Eye'
+    EYE: 'Eye',
+    STAR: 'Star',
+    CTHULU: 'Cthulu'
   }
 
   CthuluDice.STATES = STATES
@@ -101,6 +103,23 @@
           gameState.eyeChoicePlayer = victimName
           message += `${victimName} responded with opening the eye! What do you want to do, ${victimName}?`
           break
+        case FACES.STAR:
+          message += `${victimName} responded with the ancient stars shining`
+          if (gameState.cthulu > 0) {
+            gameState.cthulu--
+            gameState.players[targetIndex].sanity++
+            message += `! ${victimName} has gains a sanity from Cthulu.`
+          } else {
+            message += `, but Cthulu has not stolen any sanity.`
+          }
+          break
+        case FACES.CTHULU:
+          message += `${victimName} responded with awakening Cthulu! @everyone loses a sanity to Cthulu!`
+          for (let player of gameState.players) {
+            player.sanity--
+            gameState.cthulu++
+          }
+          break
       }
     }
 
@@ -143,6 +162,14 @@
 
     if (score === 10) {
       return FACES.EYE
+    }
+
+    if (score === 11) {
+      return FACES.STAR
+    }
+
+    if (score === 12) {
+      return FACES.CTHULU
     }
 
     throw new Error('Not yet implemented')
