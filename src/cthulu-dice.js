@@ -52,7 +52,8 @@
     }
 
     let gameState = {
-      players: playerObjects
+      players: playerObjects,
+      cthulu: 0
     }
 
     gameState.currentPlayer = Math.floor(this.math.random() * gameState.players.length)
@@ -83,6 +84,11 @@
           gameState.players[targetIndex].sanity--
           message = `${playerId} rolled a yellow sign! ${victimName} loses 1 sanity to Cthulu.\n`
           gameState.cthulu = gameState.cthulu + 1 || 1
+          break
+        case FACES.TENTACLE:
+          gameState.players[targetIndex].sanity--
+          gameState.players[gameState.currentPlayer].sanity++
+          message += `${playerId} rolled a tentacle! ${victimName} loses 1 sanity to ${playerId}.\n`
           break
       }
 
