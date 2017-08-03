@@ -141,7 +141,7 @@
           })
 
           it('should set the game state to be awaiting eye choice', () => {
-            assert.equal(response.gameState.currentAction, CthuluDice.STATES.EYE_CHOICE)
+            assert.equal(response.gameState.currentAction, CthuluDice.STATES.EYE_CHOICE_VICTIM)
           })
 
           it('should know who should respond', () => {

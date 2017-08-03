@@ -22,7 +22,8 @@
 
   const STATES = {
     CHOOSE_TARGET: 'Choosing target',
-    EYE_CHOICE: 'Choosing Eye option'
+    EYE_CHOICE_VICTIM: 'Victim choosing Eye option',
+    EYE_CHOICE_ATTACKER: 'Attacker choosing Eye option'
   }
 
   const FACES = {
@@ -90,6 +91,14 @@
           gameState.players[gameState.currentPlayer].sanity++
           message += `${playerId} rolled a tentacle! ${victimName} loses 1 sanity to ${playerId}.\n`
           break
+        case FACES.EYE:
+          gameState.currentAction = STATES.EYE_CHOICE_ATTACKER
+          gameState.eyeChoicePlayer = victimName
+          message += `${playerId} has opened The Eye! What do you want to do, ${playerId}?`
+          return {
+            message,
+            gameState
+          }
       }
 
       dice = roll(this.math.random())
@@ -105,7 +114,7 @@
           message += `${victimName} responded with a tentacle! ${victimName} loses 1 sanity to ${playerId}.`
           break
         case FACES.EYE:
-          gameState.currentAction = STATES.EYE_CHOICE
+          gameState.currentAction = STATES.EYE_CHOICE_VICTIM
           gameState.eyeChoicePlayer = victimName
           message += `${victimName} responded with opening the eye! What do you want to do, ${victimName}?`
           break
