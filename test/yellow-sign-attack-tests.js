@@ -167,7 +167,7 @@
           })
 
           it('should report a star was rolled in response', () => {
-            assert.equal(response.message.substring(attackMessage.length), '<@196004823802445824> responded with the ancient stars shining! <@196004823802445824> has gains a sanity from Cthulu.')
+            assert.equal(response.message.substring(attackMessage.length), '<@196004823802445824> responded with the ancient stars shining! <@196004823802445824> gains a sanity from Cthulu.')
           })
 
           it('should leave cthulu at zero sanity', () => {

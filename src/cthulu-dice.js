@@ -99,6 +99,18 @@
             message,
             gameState
           }
+        case FACES.STAR:
+          message += `${playerId} rolled an ancient star`
+          if (gameState.cthulu > 0) {
+            gameState.cthulu--
+            gameState.players[targetIndex].sanity++
+            message += `! ${playerId} gains a sanity from Cthulu.`
+          } else {
+            message += `, but Cthulu has not stolen any sanity.`
+          }
+
+          message += '\n'
+          break
       }
 
       dice = roll(this.math.random())
@@ -123,7 +135,7 @@
           if (gameState.cthulu > 0) {
             gameState.cthulu--
             gameState.players[targetIndex].sanity++
-            message += `! ${victimName} has gains a sanity from Cthulu.`
+            message += `! ${victimName} gains a sanity from Cthulu.`
           } else {
             message += `, but Cthulu has not stolen any sanity.`
           }
