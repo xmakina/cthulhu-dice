@@ -71,6 +71,13 @@ module.exports = function (gameState, content, message, playerId, math) {
 
       message += '\n'
       break
+    case FACES.CTHULU:
+      message += `${playerId} has awoken Cthulu! @everyone loses a sanity!\n`
+      for (let player of gameState.players) {
+        player.sanity--
+        gameState.cthulu++
+      }
+      break
   }
 
   dice = roll(math.random())

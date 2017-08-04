@@ -89,8 +89,6 @@
     }
   }
 
-  
-
   function nextPlayer (gameState) {
     gameState.currentPlayer++
     if (gameState.currentPlayer >= gameState.players.length) {
