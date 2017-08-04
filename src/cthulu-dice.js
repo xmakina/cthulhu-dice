@@ -103,7 +103,7 @@
           message += `${playerId} rolled an ancient star`
           if (gameState.cthulu > 0) {
             gameState.cthulu--
-            gameState.players[targetIndex].sanity++
+            gameState.players[gameState.currentPlayer].sanity++
             message += `! ${playerId} gains a sanity from Cthulu.`
           } else {
             message += `, but Cthulu has not stolen any sanity.`

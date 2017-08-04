@@ -236,8 +236,8 @@
               response = subject.run(currentPlayer, content, gameState)
             })
 
-            it('should lower the target by one sanity', () => {
-              assert.equal(response.gameState.players[targetPlayerIndex].sanity, 2)
+            it('should leave the target at three sanity', () => {
+              assert.equal(response.gameState.players[targetPlayerIndex].sanity, 3)
             })
 
             it('should report a star was rolled', () => {
@@ -388,8 +388,8 @@
               assert.equal(response.message.substring(attackMessage.length), '<@196004823802445824> responded with awakening Cthulu! @everyone loses a sanity to Cthulu!')
             })
 
-            it('should give cthulu two sanity', () => {
-              assert.equal(response.gameState.cthulu, 2)
+            it('should give cthulu three sanity', () => {
+              assert.equal(response.gameState.cthulu, 3)
             })
 
             it('should set the game state to be awaiting an attack', () => {
