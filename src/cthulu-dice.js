@@ -75,10 +75,18 @@
       }
     }
 
-    if (gameState.currentAction === STATES.CHOOSE_TARGET) {
-      let attack = require('./attack')(gameState, content, message, playerId, this.math)
-      message = attack.message
-      gameState = attack.gameState
+    let attack = {}
+    switch (gameState.currentAction) {
+      case STATES.CHOOSE_TARGET:
+        attack = require('./attack')(gameState, content, message, playerId, this.math)
+        message = attack.message
+        gameState = attack.gameState
+        break
+      case STATES.EYE_CHOICE_ATTACKER:
+        attack = require('./attack')(gameState, content, message, playerId, this.math)
+        message = attack.message
+        gameState = attack.gameState
+        break
     }
 
     gameState = nextPlayer(gameState)

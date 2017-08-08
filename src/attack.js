@@ -36,20 +36,54 @@ function roll (number) {
 }
 
 module.exports = function (gameState, content, message, playerId, math) {
-  const targetIndex = findTarget(gameState.players, content)
-  const victimName = gameState.players[targetIndex].name
+  let targetIndex = null
+  let victimName = null
+  let dice = null
+  if (gameState.currentAction === STATES.EYE_CHOICE_ATTACKER || gameState.currentAction === STATES.EYE_CHOICE_VICTIM) {
+    targetIndex = findTarget(gameState.players, gameState.eyeChoicePlayer)
+    victimName = gameState.players[targetIndex].name
 
-  let dice = roll(math.random())
+    switch (content.toLowerCase()) {
+      case 'yellow sign':
+        dice = FACES.YELLOW_SIGN
+        break
+      case 'tentacle':
+        dice = FACES.TENTACLE
+        break
+      case 'star':
+        dice = FACES.STAR
+        break
+      case 'cthulu':
+        dice = FACES.CTHULU
+        break
+      default:
+        return {gameState, message: 'Invalid choice. Your choices are: "yellow sign", "tentacle", "star" or "cthulu"'}
+    }
+  } else {
+    dice = roll(math.random())
+    targetIndex = findTarget(gameState.players, content)
+    victimName = gameState.players[targetIndex].name
+  }
+
   switch (dice) {
     case FACES.YELLOW_SIGN:
       gameState.players[targetIndex].sanity--
-      message = `${playerId} rolled a yellow sign! ${victimName} loses 1 sanity to Cthulu.\n`
+      if (gameState.currentAction === STATES.EYE_CHOICE_ATTACKER || gameState.currentAction === STATES.EYE_CHOICE_VICTIM) {
+        message = `${playerId} chose a yellow sign! ${victimName} loses 1 sanity to Cthulu.\n`
+      } else {
+        message = `${playerId} rolled a yellow sign! ${victimName} loses 1 sanity to Cthulu.\n`
+      }
+
       gameState.cthulu = gameState.cthulu + 1 || 1
       break
     case FACES.TENTACLE:
       gameState.players[targetIndex].sanity--
       gameState.players[gameState.currentPlayer].sanity++
-      message += `${playerId} rolled a tentacle! ${victimName} loses 1 sanity to ${playerId}.\n`
+      if (gameState.currentAction === STATES.EYE_CHOICE_ATTACKER || gameState.currentAction === STATES.EYE_CHOICE_VICTIM) {
+        message += `${playerId} chose a tentacle! ${victimName} loses 1 sanity to ${playerId}.\n`
+      } else {
+        message += `${playerId} rolled a tentacle! ${victimName} loses 1 sanity to ${playerId}.\n`
+      }
       break
     case FACES.EYE:
       gameState.currentAction = STATES.EYE_CHOICE_ATTACKER
@@ -60,7 +94,11 @@ module.exports = function (gameState, content, message, playerId, math) {
         gameState
       }
     case FACES.STAR:
-      message += `${playerId} rolled an ancient star`
+      if (gameState.currentAction === STATES.EYE_CHOICE_ATTACKER || gameState.currentAction === STATES.EYE_CHOICE_VICTIM) {
+        message += `${playerId} chose an ancient star`
+      } else {
+        message += `${playerId} rolled an ancient star`
+      }
       if (gameState.cthulu > 0) {
         gameState.cthulu--
         gameState.players[gameState.currentPlayer].sanity++
@@ -86,11 +124,13 @@ module.exports = function (gameState, content, message, playerId, math) {
       gameState.players[gameState.currentPlayer].sanity--
       message += `${victimName} responded with a yellow sign! ${playerId} loses 1 sanity to Cthulu.`
       gameState.cthulu = gameState.cthulu + 1 || 1
+      gameState.currentAction = STATES.CHOOSE_TARGET
       break
     case FACES.TENTACLE:
       gameState.players[targetIndex].sanity--
       gameState.players[gameState.currentPlayer].sanity++
       message += `${victimName} responded with a tentacle! ${victimName} loses 1 sanity to ${playerId}.`
+      gameState.currentAction = STATES.CHOOSE_TARGET
       break
     case FACES.EYE:
       gameState.currentAction = STATES.EYE_CHOICE_VICTIM
@@ -106,6 +146,7 @@ module.exports = function (gameState, content, message, playerId, math) {
       } else {
         message += `, but Cthulu has not stolen any sanity.`
       }
+      gameState.currentAction = STATES.CHOOSE_TARGET
       break
     case FACES.CTHULU:
       message += `${victimName} responded with awakening Cthulu! @everyone loses a sanity to Cthulu!`
@@ -113,6 +154,7 @@ module.exports = function (gameState, content, message, playerId, math) {
         player.sanity--
         gameState.cthulu++
       }
+      gameState.currentAction = STATES.CHOOSE_TARGET
       break
   }
 
