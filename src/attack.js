@@ -48,6 +48,10 @@ module.exports = function (gameState, content, message, playerId, math) {
       return { gameState, message: `You cannot attack ${gameState.eyeChoicePlayer}, they have gone mad.`, err: true }
     }
 
+    if (targetIndex === gameState.currentPlayer) {
+      return { gameState, message: `You cannot attack yourself!`, err: true }
+    }
+
     victimName = gameState.players[targetIndex].name
 
     switch (content.toLowerCase()) {
@@ -70,6 +74,10 @@ module.exports = function (gameState, content, message, playerId, math) {
     targetIndex = findTarget(gameState.players, content)
     if (targetIndex === null) {
       return { gameState, message: `You cannot attack ${content}, they have gone mad.`, err: true }
+    }
+
+    if (targetIndex === gameState.currentPlayer) {
+      return { gameState, message: `You cannot attack yourself!`, err: true }
     }
 
     dice = roll(math.random())
