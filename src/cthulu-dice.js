@@ -142,11 +142,11 @@
       }
     }
 
-    if (sanePlayers === 1) {
+    if (sanePlayers.length === 1) {
       return {gameState: false, message: [`The winner is ${gameState.players[sanePlayers[0]].name}`]}
     }
 
-    if (sanePlayers === 0) {
+    if (sanePlayers.length === 0) {
       return {gameState: false, message: ['Everyone has gone mad! All hail Cthulu!']}
     }
 
