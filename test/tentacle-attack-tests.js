@@ -63,7 +63,7 @@
           })
 
           it('should report a tentacle was rolled', () => {
-            assert.equal(response.message.indexOf(attackMessage), 0)
+            assert.equal(response.message[0].indexOf(attackMessage), 0)
           })
 
           it('should leave the attacker at three sanity', () => {
@@ -71,7 +71,7 @@
           })
 
           it('should report a yellow sign was rolled in response', () => {
-            assert.equal(response.message.substring(attackMessage.length), '<@196004823802445824> responded with a yellow sign! <@201981727873171456> loses 1 sanity to Cthulu.')
+            assert.equal(response.message[0].substring(attackMessage.length), '<@196004823802445824> responded with a yellow sign! <@201981727873171456> loses 1 sanity to Cthulu.')
           })
 
           it('should add one sanity to cthulu', () => {
@@ -94,7 +94,7 @@
           })
 
           it('should report a tentacle was rolled', () => {
-            assert.equal(response.message.indexOf(attackMessage), 0)
+            assert.equal(response.message[0].indexOf(attackMessage), 0)
           })
 
           it('should increase the attacker by two sanity', () => {
@@ -102,7 +102,7 @@
           })
 
           it('should report a tentacle was rolled in response', () => {
-            assert.equal(response.message.substring(attackMessage.length), '<@196004823802445824> responded with a tentacle! <@196004823802445824> loses 1 sanity to <@201981727873171456>.')
+            assert.equal(response.message[0].substring(attackMessage.length), '<@196004823802445824> responded with a tentacle! <@196004823802445824> loses 1 sanity to <@201981727873171456>.')
           })
 
           it('should leave cthulu at zero sanity', () => {
@@ -125,7 +125,7 @@
           })
 
           it('should report a yellow sign was rolled', () => {
-            assert.equal(response.message.indexOf(attackMessage), 0)
+            assert.equal(response.message[0].indexOf(attackMessage), 0)
           })
 
           it('should give the attacker one sanity', () => {
@@ -133,7 +133,7 @@
           })
 
           it('should report an eye was rolled in response', () => {
-            assert.equal(response.message.substring(attackMessage.length), '<@196004823802445824> responded with opening the eye! What do you want to do, <@196004823802445824>?')
+            assert.equal(response.message[0].substring(attackMessage.length), '<@196004823802445824> responded with opening the eye! What do you want to do, <@196004823802445824>?')
           })
 
           it('should leave cthulu at zero sanity', () => {
@@ -160,7 +160,7 @@
           })
 
           it('should report a yellow sign was rolled', () => {
-            assert.equal(response.message.indexOf(attackMessage), 0)
+            assert.equal(response.message[0].indexOf(attackMessage), 0)
           })
 
           it('should give the attacker one sanity', () => {
@@ -168,7 +168,7 @@
           })
 
           it('should report a star was rolled in response', () => {
-            assert.equal(response.message.substring(attackMessage.length), '<@196004823802445824> responded with the ancient stars shining, but Cthulu has not stolen any sanity.')
+            assert.equal(response.message[0].substring(attackMessage.length), '<@196004823802445824> responded with the ancient stars shining, but Cthulu has not stolen any sanity.')
           })
 
           it('should leave cthulu at zero sanity', () => {
@@ -195,7 +195,7 @@
           })
 
           it('should report a yellow sign was rolled', () => {
-            assert.equal(response.message.indexOf(attackMessage), 0)
+            assert.equal(response.message[0].indexOf(attackMessage), 0)
           })
 
           it('should leave the attacker at three sanity', () => {
@@ -207,7 +207,7 @@
           })
 
           it('should report a cthulu was rolled in response', () => {
-            assert.equal(response.message.substring(attackMessage.length), '<@196004823802445824> responded with awakening Cthulu! @everyone loses a sanity to Cthulu!')
+            assert.equal(response.message[0].substring(attackMessage.length), '<@196004823802445824> responded with awakening Cthulu! @everyone loses a sanity to Cthulu!')
           })
 
           it('should give cthulu three sanity', () => {

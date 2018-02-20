@@ -73,6 +73,10 @@
           assert.equal(response.gameState.currentAction, CthuluDice.STATES.EYE_CHOICE_ATTACKER)
         })
 
+        it('should not advance the current player', () => {
+          assert.equal(response.gameState.currentPlayer, currentPlayerIndex)
+        })
+
         it('should know who is being targeted', () => {
           assert.equal(response.gameState.eyeChoicePlayer, players[targetPlayerIndex])
         })

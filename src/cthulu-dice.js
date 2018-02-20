@@ -85,18 +85,19 @@
     switch (gameState.currentAction) {
       case STATES.CHOOSE_TARGET:
         attack = require('./attack')(gameState, content, message, playerId, this.math)
-        message = attack.message
+        message = [attack.message]
         gameState = attack.gameState
         break
       case STATES.EYE_CHOICE_ATTACKER:
         attack = require('./attack')(gameState, content, message, playerId, this.math)
-        message = attack.message
+        message = [attack.message]
         gameState = attack.gameState
         break
     }
 
-    if (attack.err === undefined) {
+    if (attack.err === undefined && gameState.currentAction !== STATES.EYE_CHOICE_ATTACKER) {
       gameState = nextPlayer(gameState)
+      message.push(`It is now ${gameState.players[gameState.currentPlayer].name}'s turn`)
     }
 
     return {
