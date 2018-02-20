@@ -74,6 +74,13 @@
   CthuluDice.prototype.run = function (playerId, content, gameState) {
     let message = ''
 
+    if (content.toLowerCase() === 'quit') {
+      return {
+        message: `${playerId} has conceded the game`,
+        gameState: false
+      }
+    }
+
     if (playerId !== gameState.players[gameState.currentPlayer].name) {
       return {
         message: `${playerId}, it's not your turn yet`,
