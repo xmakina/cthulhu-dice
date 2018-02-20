@@ -1,8 +1,11 @@
-const {FACES, STATES} = require('./cthulu-dice')
+const { FACES, STATES } = require('./cthulu-dice')
 
 function findTarget (players, target) {
   for (var i = 0; i < players.length; i++) {
     if (players[i].name === target) {
+      if (players[i].sanity === 0) {
+        return null
+      }
       return i
     }
   }
@@ -35,12 +38,38 @@ function roll (number) {
   throw new Error('Not yet implemented')
 }
 
+function fixSanity (gameState, message) {
+  var sanePlayers = []
+  for (var i = 0; i < gameState.players.length; i++) {
+    if (gameState.players[i].sanity < 0) {
+      gameState.players[i].sanity = 0
+      message = message + '\n' + gameState.players[i].name + ' has gone mad!'
+    } else if (gameState.players[i].sanity > 0) {
+      sanePlayers.push(i)
+    }
+  }
+
+  if (sanePlayers === 1) {
+    return {gameState: false, message: 'The winner is ' + gameState.players[sanePlayers[0]].name}
+  }
+
+  if (sanePlayers === 0) {
+    return {gameState: false, message: 'Everyone has gone mad! All hail Cthulu!'}
+  }
+
+  return { gameState, message }
+}
+
 module.exports = function (gameState, content, message, playerId, math) {
   let targetIndex = null
   let victimName = null
   let dice = null
   if (gameState.currentAction === STATES.EYE_CHOICE_ATTACKER || gameState.currentAction === STATES.EYE_CHOICE_VICTIM) {
     targetIndex = findTarget(gameState.players, gameState.eyeChoicePlayer)
+    if (targetIndex === null) {
+      return { gameState, message: 'Invalid choice. You cannot target a player who has gone mad.' }
+    }
+
     victimName = gameState.players[targetIndex].name
 
     switch (content.toLowerCase()) {
@@ -57,7 +86,7 @@ module.exports = function (gameState, content, message, playerId, math) {
         dice = FACES.CTHULU
         break
       default:
-        return {gameState, message: 'Invalid choice. Your choices are: "yellow sign", "tentacle", "star" or "cthulu"'}
+        return { gameState, message: 'Invalid choice. Your choices are: "yellow sign", "tentacle", "star" or "cthulu"' }
     }
   } else {
     dice = roll(math.random())
@@ -158,5 +187,5 @@ module.exports = function (gameState, content, message, playerId, math) {
       break
   }
 
-  return {message, gameState}
+  return fixSanity(gameState, message)
 }

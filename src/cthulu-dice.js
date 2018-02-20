@@ -23,7 +23,9 @@
   const STATES = {
     CHOOSE_TARGET: 'Choosing target',
     EYE_CHOICE_VICTIM: 'Victim choosing Eye option',
-    EYE_CHOICE_ATTACKER: 'Attacker choosing Eye option'
+    EYE_CHOICE_ATTACKER: 'Attacker choosing Eye option',
+    WINNER: 'Someone has won',
+    DRAW: 'Cthulu has won'
   }
 
   const FACES = {
