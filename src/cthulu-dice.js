@@ -95,7 +95,9 @@
         break
     }
 
-    gameState = nextPlayer(gameState)
+    if (attack.err === undefined) {
+      gameState = nextPlayer(gameState)
+    }
 
     return {
       message,

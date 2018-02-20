@@ -67,7 +67,7 @@ module.exports = function (gameState, content, message, playerId, math) {
   if (gameState.currentAction === STATES.EYE_CHOICE_ATTACKER || gameState.currentAction === STATES.EYE_CHOICE_VICTIM) {
     targetIndex = findTarget(gameState.players, gameState.eyeChoicePlayer)
     if (targetIndex === null) {
-      return { gameState, message: 'Invalid choice. You cannot target a player who has gone mad.' }
+      return { gameState, message: 'Invalid choice. You cannot target a player who has gone mad.', err: true }
     }
 
     victimName = gameState.players[targetIndex].name
@@ -86,13 +86,13 @@ module.exports = function (gameState, content, message, playerId, math) {
         dice = FACES.CTHULU
         break
       default:
-        return { gameState, message: 'Invalid choice. Your choices are: "yellow sign", "tentacle", "star" or "cthulu"' }
+        return { gameState, message: 'Invalid choice. Your choices are: "yellow sign", "tentacle", "star" or "cthulu"', err: true }
     }
   } else {
     dice = roll(math.random())
     targetIndex = findTarget(gameState.players, content)
     if (targetIndex === null) {
-      return { gameState, message: `I don't see a player called ${content}` }
+      return { gameState, message: `I don't see a player called ${content}`, err: true }
     }
 
     victimName = gameState.players[targetIndex].name
