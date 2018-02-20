@@ -38,28 +38,6 @@ function roll (number) {
   throw new Error('Not yet implemented')
 }
 
-function fixSanity (gameState, message) {
-  var sanePlayers = []
-  for (var i = 0; i < gameState.players.length; i++) {
-    if (gameState.players[i].sanity < 0) {
-      gameState.players[i].sanity = 0
-      message = message + '\n' + gameState.players[i].name + ' has gone mad!'
-    } else if (gameState.players[i].sanity > 0) {
-      sanePlayers.push(i)
-    }
-  }
-
-  if (sanePlayers === 1) {
-    return {gameState: false, message: 'The winner is ' + gameState.players[sanePlayers[0]].name}
-  }
-
-  if (sanePlayers === 0) {
-    return {gameState: false, message: 'Everyone has gone mad! All hail Cthulu!'}
-  }
-
-  return { gameState, message }
-}
-
 module.exports = function (gameState, content, message, playerId, math) {
   let targetIndex = null
   let victimName = null
@@ -191,5 +169,5 @@ module.exports = function (gameState, content, message, playerId, math) {
       break
   }
 
-  return fixSanity(gameState, message)
+  return {gameState, message}
 }

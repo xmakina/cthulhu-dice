@@ -97,6 +97,24 @@
 
     if (attack.err === undefined && gameState.currentAction !== STATES.EYE_CHOICE_ATTACKER) {
       gameState = nextPlayer(gameState)
+
+      var finalForm = fixSanity(gameState, message)
+
+      message = finalForm.message
+      gameState = finalForm.gameState
+
+      if (gameState === false) {
+        return {
+          message,
+          gameState
+        }
+      }
+
+      for (var i = 0; i < gameState.players.length; i++) {
+        var player = gameState.players[i]
+        message.push(`${player.name} has ${player.sanity} sanity remaining`)
+      }
+
       message.push(`It is now ${gameState.players[gameState.currentPlayer].name}'s turn`)
     }
 
@@ -104,6 +122,28 @@
       message,
       gameState
     }
+  }
+
+  function fixSanity (gameState, message) {
+    var sanePlayers = []
+    for (var i = 0; i < gameState.players.length; i++) {
+      if (gameState.players[i].sanity < 0) {
+        gameState.players[i].sanity = 0
+        message.push(gameState.players[i].name + ' has gone mad!')
+      } else if (gameState.players[i].sanity > 0) {
+        sanePlayers.push(i)
+      }
+    }
+
+    if (sanePlayers === 1) {
+      return {gameState: false, message: [`The winner is ${gameState.players[sanePlayers[0]].name}`]}
+    }
+
+    if (sanePlayers === 0) {
+      return {gameState: false, message: ['Everyone has gone mad! All hail Cthulu!']}
+    }
+
+    return { gameState, message }
   }
 
   function nextPlayer (gameState) {

@@ -223,6 +223,7 @@
           })
 
           it('should report a cthulu was rolled in response', () => {
+            console.log('response.message', response.message)
             assert.equal(response.message[0].substring(attackMessage.length), '<@196004823802445824> responded with awakening Cthulu! @everyone loses a sanity to Cthulu!')
           })
 
