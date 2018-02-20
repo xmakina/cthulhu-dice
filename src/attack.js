@@ -91,6 +91,10 @@ module.exports = function (gameState, content, message, playerId, math) {
   } else {
     dice = roll(math.random())
     targetIndex = findTarget(gameState.players, content)
+    if (targetIndex === null) {
+      return { gameState, message: `I don't see a player called ${content}` }
+    }
+
     victimName = gameState.players[targetIndex].name
   }
 
