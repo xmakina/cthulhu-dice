@@ -1,6 +1,6 @@
 {
   "name": "cthulhu-dice",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Stateful game of Steve Jackson Games' Cthulhu Dice for use with discord.js-gamerooms",
   "main": "index.js",
   "scripts": {
