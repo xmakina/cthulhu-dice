@@ -134,7 +134,7 @@
   function fixSanity (gameState, message) {
     var sanePlayers = []
     for (var i = 0; i < gameState.players.length; i++) {
-      if (gameState.players[i].sanity < 0) {
+      if (gameState.players[i].sanity <= 0) {
         gameState.players[i].sanity = 0
         message.push(gameState.players[i].name + ' has gone mad!')
       } else if (gameState.players[i].sanity > 0) {
