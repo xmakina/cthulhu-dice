@@ -14,7 +14,11 @@
 
   class CthuluDice {
     constructor (math) {
-      this.math = math
+      if (math) {
+        this.math = math
+      } else {
+        this.math = Math
+      }
     }
   }
 
