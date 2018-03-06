@@ -5,11 +5,11 @@
       max: 6,
       recommended: 4
     },
-    title: 'Test Game',
-    description: 'Play a game for fun!',
-    invite: 'Would you like to play a game?',
-    intro: 'Type Start to get started!',
-    rules: 'none'
+    title: 'Cthulhu Dice',
+    description: 'Serving Cthulhu is fun... except for all those other cultists out to get you. So get them first!',
+    invite: 'Be stabbed at from Hell\'s Heart?',
+    intro: '',
+    rules: 'Players choose a target, roll the dice and do the related action. Then their victim does the same. Play then moves to the next player to choose a target.'
   }
 
   class CthuluDice {
@@ -66,25 +66,35 @@
     gameState.currentPlayer = Math.floor(this.math.random() * gameState.players.length)
     gameState.currentAction = STATES.CHOOSE_TARGET
     return {
-      message: `${gameState.players[gameState.currentPlayer].name} is the start player, who do you want to attack?`,
+      message: [`${gameState.players[gameState.currentPlayer].name} is the start player, who do you want to attack?`],
       gameState
     }
   }
 
   CthuluDice.prototype.run = function (playerId, content, gameState) {
-    let message = ''
+    let message = []
 
     if (content.toLowerCase() === 'quit') {
       return {
-        message: `${playerId} has conceded the game`,
+        message: [`${playerId} has conceded the game`],
         gameState: false
       }
     }
 
-    if (playerId !== gameState.players[gameState.currentPlayer].name) {
-      return {
-        message: `${playerId}, it's not your turn yet`,
-        gameState
+    if (gameState.currentAction !== STATES.EYE_CHOICE_ATTACKER && gameState.currentAction !== STATES.EYE_CHOICE_VICTIM) {
+      if (playerId !== gameState.players[gameState.currentPlayer].name) {
+        return {
+          message: [`${playerId}, it's not your turn yet`],
+          gameState
+        }
+      }
+    } else {
+      // we're choosing an eye
+      if (playerId !== gameState.eyeChoicePlayer) {
+        return {
+          message: [`${playerId}, please wait for ${gameState.eyeChoicePlayer} to choose`],
+          gameState
+        }
       }
     }
 
@@ -100,9 +110,15 @@
         message = [attack.message]
         gameState = attack.gameState
         break
+      case STATES.EYE_CHOICE_VICTIM:
+        attack = require('./attack')(gameState, content, message, playerId, this.math)
+        message = [attack.message]
+        gameState = attack.gameState
+        break
     }
 
-    if (attack.err === undefined && gameState.currentAction !== STATES.EYE_CHOICE_ATTACKER) {
+    console.log('gameState.currentAction', gameState.currentAction)
+    if (attack.err === undefined && (gameState.currentAction !== STATES.EYE_CHOICE_ATTACKER && gameState.currentAction !== STATES.EYE_CHOICE_VICTIM)) {
       gameState = nextPlayer(gameState)
 
       var finalForm = fixSanity(gameState, message)
@@ -132,6 +148,10 @@
   }
 
   function fixSanity (gameState, message) {
+    if (!message) {
+      message = []
+    }
+
     var sanePlayers = []
     for (var i = 0; i < gameState.players.length; i++) {
       if (gameState.players[i].sanity <= 0) {
@@ -143,7 +163,8 @@
     }
 
     if (sanePlayers.length === 1) {
-      return {gameState: false, message: [`The winner is ${gameState.players[sanePlayers[0]].name}`]}
+      message.push(`The winner is ${gameState.players[sanePlayers[0]].name}`)
+      return {gameState: false, message}
     }
 
     if (sanePlayers.length === 0) {

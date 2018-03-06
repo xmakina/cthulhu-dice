@@ -1,9 +1,12 @@
 const { FACES, STATES } = require('./cthulu-dice')
 
-function findTarget (players, target) {
+function findTarget (players, target, forEye) {
   for (var i = 0; i < players.length; i++) {
     if (players[i].name === target) {
       if (players[i].sanity === 0) {
+        if (forEye) {
+          return i
+        }
         return null
       }
       return i
@@ -43,7 +46,7 @@ module.exports = function (gameState, content, message, playerId, math) {
   let victimName = null
   let dice = null
   if (gameState.currentAction === STATES.EYE_CHOICE_ATTACKER || gameState.currentAction === STATES.EYE_CHOICE_VICTIM) {
-    targetIndex = findTarget(gameState.players, gameState.eyeChoicePlayer)
+    targetIndex = findTarget(gameState.players, gameState.eyeChoicePlayer, true)
     if (targetIndex === null) {
       return { gameState, message: `You cannot attack ${gameState.eyeChoicePlayer}, they have gone mad.`, err: true }
     }
@@ -97,16 +100,33 @@ module.exports = function (gameState, content, message, playerId, math) {
       break
     case FACES.TENTACLE:
       gameState.players[targetIndex].sanity--
-      gameState.players[gameState.currentPlayer].sanity++
-      if (gameState.currentAction === STATES.EYE_CHOICE_ATTACKER || gameState.currentAction === STATES.EYE_CHOICE_VICTIM) {
-        message += `${playerId} chose a tentacle! ${victimName} loses 1 sanity to ${playerId}.\n`
+
+      if (gameState.players[gameState.currentPlayer].sanity > 0) {
+        // player is not mad
+        gameState.players[gameState.currentPlayer].sanity++
       } else {
-        message += `${playerId} rolled a tentacle! ${victimName} loses 1 sanity to ${playerId}.\n`
+        gameState.cthulu = gameState.cthulu + 1 || 1
+      }
+
+      if (gameState.currentAction === STATES.EYE_CHOICE_ATTACKER || gameState.currentAction === STATES.EYE_CHOICE_VICTIM) {
+        message += `${playerId} chose a tentacle! ${victimName} loses 1 sanity`
+        if (gameState.players[gameState.currentPlayer].sanity > 0) {
+          message += ` to ${playerId}.\n`
+        } else {
+          message += `. ${playerId} has been driven mad, the sanity goes to Cthulu.\n`
+        }
+      } else {
+        message += `${playerId} rolled a tentacle! ${victimName} loses 1 sanity`
+        if (gameState.players[gameState.currentPlayer].sanity > 0) {
+          message += ` to ${playerId}.\n`
+        } else {
+          message += `. ${playerId} has been driven mad, the sanity goes to Cthulu.\n`
+        }
       }
       break
     case FACES.EYE:
       gameState.currentAction = STATES.EYE_CHOICE_ATTACKER
-      gameState.eyeChoicePlayer = victimName
+      gameState.eyeChoicePlayer = playerId
       message += `${playerId} has opened The Eye! What do you want to do, ${playerId}?`
       return {
         message,
@@ -147,8 +167,19 @@ module.exports = function (gameState, content, message, playerId, math) {
       break
     case FACES.TENTACLE:
       gameState.players[targetIndex].sanity--
-      gameState.players[gameState.currentPlayer].sanity++
-      message += `${victimName} responded with a tentacle! ${victimName} loses 1 sanity to ${playerId}.`
+      if (gameState.players[gameState.currentPlayer].sanity > 0) {
+        gameState.players[gameState.currentPlayer].sanity++
+      } else {
+        gameState.cthulu = gameState.cthulu + 1 || 1
+      }
+
+      message += `${playerId} responded with a tentacle! ${victimName} loses 1 sanity`
+      if (gameState.players[gameState.currentPlayer].sanity > 0) {
+        message += ` to ${playerId}.\n`
+      } else {
+        message += `. ${playerId} has been driven mad, the sanity goes to Cthulu.\n`
+      }
+
       gameState.currentAction = STATES.CHOOSE_TARGET
       break
     case FACES.EYE:
